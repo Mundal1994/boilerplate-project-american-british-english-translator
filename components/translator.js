@@ -196,6 +196,42 @@ class Translator {
     toAmerican(text) {
         return this.translate(text, false);
     }
+
+    highlight(text, toBritish) {
+        const arrayOrig = text.split(" ");
+        const arrayText = (toBritish ? this.toBritish(text) : this.toAmerican(text)).split(" ");
+
+        let i = 0;
+        let j = 0;
+        let highlighted = '';
+        let first = true;
+        let prev = false;
+        while (i < arrayOrig.length && j < arrayText.length) {
+            if (!first) {
+                highlighted += ' ';
+            }
+            first = false;
+            if (arrayOrig[i] != arrayText[j]) {
+                if (!prev) {
+                    highlighted += '<span class="highlight">';
+                    prev = true;
+                }
+                highlighted += arrayText[j];
+            } else {
+                if (prev) {
+                    highlighted += '</span>';
+                    prev = false;
+                }
+                highlighted += arrayText[j];
+            }
+            i++;
+            j++;
+        }
+        if (prev) {
+            highlighted += '</span>';
+        }
+        return highlighted;
+    }
 }
 
 module.exports = Translator;

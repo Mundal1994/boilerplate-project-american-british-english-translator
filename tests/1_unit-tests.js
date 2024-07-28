@@ -68,15 +68,19 @@ suite('Unit Tests', () => {
         test('Tea time is usually around 4 or 4.30. to American English', function() {
             assert.equal(translator.toAmerican('Tea time is usually around 4 or 4.30.'), 'Tea time is usually around 4 or 4:30.');
         });
-    });/*
+    });
     suite('Highlight translation', () => {
-        test('Mangoes are my favorite fruit.', function(){
+        test('Mangoes are my favorite fruit.', function() {
+            assert.equal(translator.highlight('Mangoes are my favorite fruit.', true), 'Mangoes are my <span class="highlight">favourite </span>fruit.');
         });
-        test('I ate yogurt for breakfast.', function(){
+        test('I ate yogurt for breakfast.', function() {
+            assert.equal(translator.highlight('I ate yogurt for breakfast.', true), 'I ate <span class="highlight">yoghurt </span>for <span class="highlight">brekkie.</span>');
         });
-        test('We watched the footie match for a while.', function(){
+        test('We watched the footie match for a while.', function() {
+            assert.equal(translator.highlight('We watched the footie match for a while.', false), 'We watched the <span class="highlight">soccer </span>match for a while.');
         });
-        test('Paracetamol takes up to an hour to work.', function(){
+        test('Paracetamol takes up to an hour to work.', function() {
+            assert.equal(translator.highlight('Paracetamol takes up to an hour to work.', false), '<span class="highlight">Acetaminophen </span>takes up to an hour to work.');
         });
-    });*/
+    });
 });
