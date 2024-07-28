@@ -207,11 +207,10 @@ class Translator {
         let first = true;
         let prev = false;
         while (i < arrayOrig.length && j < arrayText.length) {
-            if (!first) {
-                highlighted += ' ';
-            }
-            first = false;
             if (arrayOrig[i] != arrayText[j]) {
+                if (!first) {
+                    highlighted += ' ';
+                }
                 if (!prev) {
                     highlighted += '<span class="highlight">';
                     prev = true;
@@ -222,8 +221,13 @@ class Translator {
                     highlighted += '</span>';
                     prev = false;
                 }
+                if (!first) {
+                    highlighted += ' ';
+                }
                 highlighted += arrayText[j];
             }
+            
+            first = false;
             i++;
             j++;
         }

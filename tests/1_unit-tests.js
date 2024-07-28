@@ -71,16 +71,16 @@ suite('Unit Tests', () => {
     });
     suite('Highlight translation', () => {
         test('Mangoes are my favorite fruit.', function() {
-            assert.equal(translator.highlight('Mangoes are my favorite fruit.', true), 'Mangoes are my <span class="highlight">favourite </span>fruit.');
+            assert.equal(translator.highlight('Mangoes are my favorite fruit.', true), 'Mangoes are my <span class="highlight">favourite</span> fruit.');
         });
         test('I ate yogurt for breakfast.', function() {
-            assert.equal(translator.highlight('I ate yogurt for breakfast.', true), 'I ate <span class="highlight">yoghurt </span>for <span class="highlight">brekkie.</span>');
+            assert.equal(translator.highlight('I ate yogurt for breakfast.', true), 'I ate <span class="highlight">yoghurt</span> for <span class="highlight">brekkie.</span>');
         });
         test('We watched the footie match for a while.', function() {
-            assert.equal(translator.highlight('We watched the footie match for a while.', false), 'We watched the <span class="highlight">soccer </span>match for a while.');
+            assert.equal(translator.highlight('We watched the footie match for a while.', false), 'We watched the <span class="highlight">soccer</span> match for a while.');
         });
         test('Paracetamol takes up to an hour to work.', function() {
-            assert.equal(translator.highlight('Paracetamol takes up to an hour to work.', false), '<span class="highlight">Acetaminophen </span>takes up to an hour to work.');
+            assert.equal(translator.highlight('Paracetamol takes up to an hour to work.', false), '<span class="highlight">Acetaminophen</span> takes up to an hour to work.');
         });
     });
 });

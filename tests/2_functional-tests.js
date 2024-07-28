@@ -21,7 +21,7 @@ suite('Functional Tests', () => {
             assert.equal(res.status, 200);
             assert.isObject(res.body);
             assert.hasAllKeys(res.body, ['text', 'translation']);
-            assert.equal(res.body.translation, 'Mangoes are my <span class="highlight">favourite </span>fruit.');
+            assert.equal(res.body.translation, 'Mangoes are my <span class="highlight">favourite</span> fruit.');
             done();
         });
     });
