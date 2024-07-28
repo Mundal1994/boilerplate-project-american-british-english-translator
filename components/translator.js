@@ -39,47 +39,48 @@ class Translator {
             if (twoWords[twoWords.length - 1] == '.') {
                 twoWords = twoWords.slice(0,-1);
             }
-        }
-        if (hasNextNext) {
-            threeWords += wordWithDot + ' ' + myArray[i + 1].toLowerCase() + ' ' + myArray[i + 2].toLowerCase().slice(0,-1);
-            upperCaseNextNext = myArray[i + 1][2] == myArray[i + 2][0].toUpperCase() ? true : false;
-            
-            if (threeWords[threeWords.length - 1] == '.') {
-                threeWords = threeWords.slice(0,-1);
+
+            if (hasNextNext) {
+                threeWords += wordWithDot + ' ' + myArray[i + 1].toLowerCase() + ' ' + myArray[i + 2].toLowerCase();
+                upperCaseNextNext = myArray[i + 1][2] == myArray[i + 2][0].toUpperCase() ? true : false;
+                
+                if (threeWords[threeWords.length - 1] == '.') {
+                    threeWords = threeWords.slice(0,-1);
+                }
             }
         }
         return {twoWords, threeWords, upperCaseNext, upperCaseNextNext};
     }
 
-    translate(myArray, i, first, len) {
+    getTranslatedWordInBritish(myArray, i, len) {
         const upperCase = myArray[i][0] == myArray[i][0].toUpperCase() ? true : false;
         const wordWithDot = myArray[i].toLowerCase();
         let hasDot = wordWithDot[wordWithDot.length - 1] == '.' ? true : false;
         const word = hasDot ? wordWithDot.slice(0,-1) : wordWithDot;
-        let translated = '';
         
         const hasNext = i + 1 < len ? true : false;
         const hasNextNext = i + 2 < len ? true : false;
         const {twoWords, threeWords, upperCaseNext, upperCaseNextNext} = this.getNext(wordWithDot, myArray, i, hasNext, hasNextNext);
-        //let upperCaseNext = false;
-    
-        //let threeWords = '';
-        //let upperCaseNextNext = false;
-        /*if (hasNextNext) {
-            threeWords += wordWithDot + ' ' + myArray[i + 1].toLowerCase() + ' ' + myArray[i + 2].toLowerCase().slice(0,-1);
-            //upperCaseNext = myArray[i + 1][0] == myArray[i + 1][0].toUpperCase() ? true : false;
-            upperCaseNextNext = myArray[i + 1][2] == myArray[i + 2][0].toUpperCase() ? true : false;
-            
-            if (threeWords[threeWords.length - 1] == '.') {
-                threeWords = threeWords.slice(0,-1);
-            }
-        }*/
 
-        if (!first) {
-            translated += ' ';
-        }
-
-        if (word in americanToBritishSpelling) {
+        let translated = '';
+        
+        if (hasNextNext && threeWords in americanOnly) {
+            translated += this.getUpperCaseNext(americanOnly[threeWords], upperCase, upperCaseNext, upperCaseNextNext);
+            hasDot = myArray[i + 2][myArray[i + 2].length - 1] == '.' ? true : false;
+            i+=2;
+        } /*else if (hasNextNext && Object.values(britishOnly).includes(threeWords)) {
+            translated += this.getUpperCaseNext(Object.keys(britishOnly).find(key => britishOnly[key] === threeWords), upperCase, upperCaseNext, upperCaseNextNext);
+            hasDot = myArray[i + 2][myArray[i + 2].length - 1] == '.' ? true : false;
+            i+=2;
+        } */else if (hasNext && twoWords in americanOnly) {
+            translated += this.getUpperCaseNext(americanOnly[twoWords], upperCase, upperCaseNext, false);
+            hasDot = myArray[i + 1][myArray[i + 1].length - 1] == '.' ? true : false;
+            i++;
+        } /*else if (hasNext && Object.values(britishOnly).includes(twoWords)) {
+            translated += this.getUpperCaseNext(Object.keys(britishOnly).find(key => britishOnly[key] === twoWords), upperCase, upperCaseNext, false);
+            hasDot = myArray[i + 1][myArray[i + 1].length - 1] == '.' ? true : false;
+            i++;
+        } */else if (word in americanToBritishSpelling) {
             translated += this.getUpperCase(americanToBritishSpelling[word], upperCase);
         } else if (wordWithDot in americanToBritishTitles) {
             translated += this.getUpperCase(americanToBritishTitles[wordWithDot], upperCase);
@@ -88,43 +89,97 @@ class Translator {
             translated += this.getUpperCase(americanOnly[word], upperCase);
         } else if (Object.values(britishOnly).includes(word)) {
             translated += this.getUpperCase(Object.keys(britishOnly).find(key => britishOnly[key] === word), upperCase);
-        } else if (hasNext && twoWords in americanOnly) {
-            translated += this.getUpperCaseNext(americanOnly[twoWords], upperCase, upperCaseNext, false);
-            hasDot = myArray[i + 1][myArray[i + 1].length - 1] == '.' ? true : false;
-            i++;
-        } else if (hasNext && Object.values(britishOnly).includes(twoWords)) {
-            translated += this.getUpperCaseNext(Object.keys(britishOnly).find(key => britishOnly[key] === twoWords), upperCase, upperCaseNext, false);
-            hasDot = myArray[i + 1][myArray[i + 1].length - 1] == '.' ? true : false;
-            i++;
-        } else if (hasNextNext && threeWords in americanOnly) {
-            translated += this.getUpperCaseNext(americanOnly[threeWords], upperCase, upperCaseNext, upperCaseNextNext);
-            hasDot = myArray[i + 2][myArray[i + 2].length - 1] == '.' ? true : false;
-            i+=2;
-        } else if (hasNextNext && Object.values(britishOnly).includes(threeWords)) {
-            translated += this.getUpperCaseNext(Object.keys(britishOnly).find(key => britishOnly[key] === threeWords), upperCase, upperCaseNext, upperCaseNextNext);
-            hasDot = myArray[i + 2][myArray[i + 2].length - 1] == '.' ? true : false;
-            i+=2;
         } else if (word.includes(':')) {
-            translated += word.slice(0,2) + '.' + word.slice(3);
+            const dotPos = word.indexOf(':');
+            translated += word.slice(0, dotPos) + '.' + word.slice(dotPos + 1);
         } else {
             translated += myArray[i];
             hasDot = false;
         }
+        return {translated, i, hasDot};
+    }
+
+    getTranslatedWordInAmerican(myArray, i, len) {
+        const upperCase = myArray[i][0] == myArray[i][0].toUpperCase() ? true : false;
+        const wordWithDot = myArray[i].toLowerCase();
+        let hasDot = wordWithDot[wordWithDot.length - 1] == '.' ? true : false;
+        const word = hasDot ? wordWithDot.slice(0,-1) : wordWithDot;
+        
+        const hasNext = i + 1 < len ? true : false;
+        const hasNextNext = i + 2 < len ? true : false;
+        const {twoWords, threeWords, upperCaseNext, upperCaseNextNext} = this.getNext(wordWithDot, myArray, i, hasNext, hasNextNext);
+
+        let translated = '';
+        
+        if (hasNextNext && threeWords in britishOnly) {
+            translated += this.getUpperCaseNext(britishOnly[threeWords], upperCase, upperCaseNext, upperCaseNextNext);
+            hasDot = myArray[i + 2][myArray[i + 2].length - 1] == '.' ? true : false;
+            i+=2;
+        } /*else if (hasNextNext && Object.values(americanOnly).includes(threeWords)) {
+            translated += this.getUpperCaseNext(Object.values(americanOnly).includes(threeWords), upperCase, upperCaseNext, upperCaseNextNext);
+            hasDot = myArray[i + 2][myArray[i + 2].length - 1] == '.' ? true : false;
+            i+=2;
+        } */else if (hasNext && twoWords in britishOnly) {
+            translated += this.getUpperCaseNext(britishOnly[twoWords], upperCase, upperCaseNext, false);
+            hasDot = myArray[i + 1][myArray[i + 1].length - 1] == '.' ? true : false;
+            i++;
+        } /*else if (hasNext && Object.values(americanOnly).includes(twoWords)) {
+            translated += this.getUpperCaseNext(Object.keys(americanOnly).find(key => americanOnly[key] === twoWords), upperCase, upperCaseNext, false);
+            hasDot = myArray[i + 1][myArray[i + 1].length - 1] == '.' ? true : false;
+            i++;
+        } */else if (Object.values(americanToBritishSpelling).includes(word)) {
+            translated += this.getUpperCase(Object.keys(americanToBritishSpelling).find(key => americanToBritishSpelling[key] === word), upperCase);
+        } else if (Object.values(americanToBritishTitles).includes(wordWithDot)) {
+            translated += this.getUpperCase(Object.keys(americanToBritishTitles).find(key => americanToBritishTitles[key] === wordWithDot), upperCase);
+            hasDot = false;
+        } else if (Object.values(americanOnly).includes(word)) {
+            translated += this.getUpperCase(Object.keys(americanOnly).find(key => americanOnly[key] === word), upperCase);
+        } else if (word in britishOnly) {
+            translated += this.getUpperCase(britishOnly[word], upperCase);
+        } else if (word.includes('.') && Number(word)) {
+            const dotPos = word.indexOf('.');
+            translated += word.slice(0, dotPos) + ':' + word.slice(dotPos + 1);
+        } else {
+            translated += myArray[i];
+            hasDot = false;
+        }
+        return {translated, i, hasDot};
+    }
+
+    getTranslatedWord(myArray, i, first, toBritish, len) {
+        let translated = '';
+        let hasDot = false;
+
+        if (!first) {
+            translated += ' ';
+        }
+
+        if (toBritish) {
+            const result = this.getTranslatedWordInBritish(myArray, i, len);
+            translated += result.translated;
+            i = result.i;
+            hasDot = result.hasDot;
+        } else {
+            const result = this.getTranslatedWordInAmerican(myArray, i, len);
+            translated += result.translated;
+            i = result.i;
+            hasDot = result.hasDot;
+        }
+
         if (hasDot) {
             translated += '.';
         }
         return {translated, i};
     }
 
-    toBritish(text) {
+    translate(text, toBritish) {
         const myArray = text.split(" ");
         let translated = '';
         let first = true;
         const len = myArray.length;
 
         for (let i = 0; i < len; i++) {
-            const returned = this.translate(myArray, i, first, len);
-            console.log("returned: ", returned.translated);
+            const returned = this.getTranslatedWord(myArray, i, first, toBritish, len);
             translated += returned.translated;
             first = false;
             if (i != returned.i) {
@@ -132,6 +187,14 @@ class Translator {
             }
         }
         return translated;
+    }
+
+    toBritish(text) {
+        return this.translate(text, true);
+    }
+
+    toAmerican(text) {
+        return this.translate(text, false);
     }
 }
 
