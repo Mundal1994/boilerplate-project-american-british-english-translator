@@ -36,7 +36,7 @@ suite('Unit Tests', () => {
         test('Lunch is at 12:15 today. to British English', function(){
             assert.equal(translator.toBritish('Lunch is at 12:15 today.'), 'Lunch is at 12.15 today.');
         });
-    });/*
+    });
     suite('Translate to American English Tests', () => {
         test('We watched the footie match for a while. to American English', function(){
         });
@@ -58,7 +58,7 @@ suite('Unit Tests', () => {
         });
         test('Tea time is usually around 4 or 4.30. to American English', function(){
         });
-    });*//*
+    });/*
     suite('Highlight translation', () => {
         test('Mangoes are my favorite fruit.', function(){
         });
